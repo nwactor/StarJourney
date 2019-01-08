@@ -1,0 +1,47 @@
+body {
+	background-color: silver;
+}
+
+#container {
+	width: 100%;
+	display: flex;
+}
+
+#viewport {
+	background-color: black;
+	position: relative;
+	border-radius: 50%; /*circular*/
+}
+
+#left-options, #right-options {
+	flex: 1;
+}
+
+.celestialObject {
+	position: absolute;
+	border-radius: 50%; /*circular*/
+}
+
+.frame {
+	position: absolute;
+}
+
+.v-container {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.h-container {
+	display: flex;
+	justify-content: center;
+}
+
+.button-container {
+	
+}
+
+.motion-button {
+	width: 50%;
+	margin: auto;
+}

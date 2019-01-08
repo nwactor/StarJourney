@@ -1,0 +1,13 @@
+﻿ID,Common Names,Gliese ID,Distance (Parsecs),Radius (Sun),Mass (Sun),Right Ascension,Declination,X,Y,Z,RA Proper Motion,Dec Proper Motion,Magnitude (apparent),Magnitude (Absolute),Luminosity,Spectral Type,Color Index (B-V),True Color,Constellation, HD (Henry Draper) ID ,Bayer ID,Flamsteed Id,Hipparcos ID,Gaia ID,HR (Harvard Revised / Yale Bright) ID,WISE ID
+1,Sun;Sol,,0,1,1,0,0,0,0,0,0,0,-26.7,4.85,1,G2V,0.656,,,,,,,,,
+2,Proxima Centauri;Alpha Centauri C,Gl 551,1.294783318,1.2234,0.1221,14.4965965,-62.68135207,,,,,,11.01,15.44901452,5.77032E-05,M5Ve,1.807,,Centaurus,,,,70890,,,
+3,Alpha Centauri A;Rigel Kentaurus,Gl 559A,1.347490972,0.8632,1.1,14.66136068,-60.83514707,,,,,,-0.01,4.34237068,1.543121066,G2V,0.71,,Centaurus,128620,Alpha Centauri A,,71683,,5459,
+4,Alpha Centauri B,Gl 559B,1.347490972,0.1542,0.907,14.66094188,-60.83947139,,,,,,1.35,5.70237068,0.440960816,K1V,0.9,,Centaurus,128621,Alpha Centauri B,,71681,,5460,
+5,Barnard's Star,Gl 699,1.8238,0.196,0.144,17.963472,4.693388,,,,,,9.54,13.235,0.000442588,M4.0V,1.57,,Ophiuchus,,,,87937,,,
+6,Wolf 359,Gl 406,2.3906,0.16,0.09,10.941484,7.01532,,,,,,13.45,16.557,2.07587E-05,M6.5,2,,Leo,,,,,,,
+7,Lalande 21185,Gl 411,2.5469,0.393,0.46,11.055632,35.969877,,,,,,7.49,10.46,0.005701643,M2V,1.502,,Ursa Major,95735,,,54035,,,
+8,Luyten 726-8A,Gl 65A,2.6267,0.14,0.102,1.650199,-17.949782,,,,,,12.57,15.473,5.63378E-05,dM5.5e,1.85,,Cetus,,,,,,,
+9,UV Ceti;Luyten 726-8B,Gl 65B,2.6267,0.14,0.1,1.650199,-17.949782,,,,,,12.7,15.603,4.99804E-05,dM5.5e,1.87,,Cetus,,,,,,,
+10,Sirius A;Dog Star,Gl 244A,2.6371,1.711,2.063,6.752481,-16.716116,,,,,,-1.44,1.454,22.82443312,A0m...,0.009,,Canis Major,48915,Alpha Canis Majoris A,9,32349,,,
+11,Sirius B,Gl 244B,2.6371,1.018,0.0084,6.752559,-16.71524,,,,,,8.44,11.334,0.002549177,DA2,-0.03,,Canis Major,,Alpha Canis Majoris B,,,,,
+12,Ross 154,Gl 729,2.9698,0.24,0.17,18.830369,-23.836232,,,,,,10.37,13.006,0.000546512,M3.5Ve,1.51,,Sagittarius,,,,92403,,,

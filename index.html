@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Star Journey</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="./data/StarData.js"></script>
+	<script type="text/javascript" src="./classes/Position.js"></script>
+	<script type="text/javascript" src="./classes/SphericalCoordinate.js"></script>
+	<script type="text/javascript" src="./classes/Rotation.js"></script>
+	<script type="text/javascript" src="./classes/CelestialObject.js"></script>
+	<script src="./bin/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="./classes/Viewport.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="left-options">
+			<button id="art-button">Art Mode</button>
+		</div>
+		<div id="viewport"></div>
+		<div id="right-options" class="v-container">
+			<div class="h-container">
+				<div class="v-container">
+					<div>Viewport Rotation</div>
+					<div class="h-container">
+						<span>X: </span><input id="view-tilt-x"></input>
+					</div>
+					<div class="h-container">
+						<span>Y: </span><input id="view-tilt-y"></input>
+					</div>
+					<div class="h-container">
+						<span>Z: </span><input id="view-tilt-z"></input>
+					</div>
+				</div>
+				<div class="v-container">
+					<div>Viewport Position<br>(Celestial Coordinates)</div>
+					<div class="h-container">
+						<span>X: </span><input id="view-pos-x"></input>
+					</div>
+					<div class="h-container">
+						<span>Y: </span><input id="view-pos-y"></input>
+					</div>
+					<div class="h-container">
+						<span>Z: </span><input id="view-pos-z"></input>
+					</div>
+				</div>
+			</div>
+			<div class="h-container">
+				<div class="v-container">
+					<button id="up-button" class="motion-button">Up</button>
+					<div class="h-container">
+						<button id="spinL-button" class="motion-button">Spin</button>
+						<button id="left-button" class="motion-button">Left</button>
+						<button id="right-button" class="motion-button">Right</button>
+						<button id="spinR-button" class="motion-button">Spin</button>
+					</div>
+					<button id="down-button" class="motion-button">Down</button>
+					<button id="jump-button" class="motion-button">Jump</button>
+				</div>
+			</div>
+			<div class="h-container">
+				
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$('#viewport').height(window.innerHeight * .95);
+		$('#viewport').width(window.innerHeight * .95);
+	</script>
+	<script type="text/javascript" src="./stellarScripts.js"></script>
+	<!-- <script type="text/javascript" src="./space.js"></script> -->
+	<script type="text/javascript" src="./tests/tests.js"></script>
+</body>
+</html>
