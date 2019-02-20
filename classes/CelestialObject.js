@@ -32,49 +32,44 @@ class CelestialObject {
 		//account for the object's diameter when displaying the div
 		appearance[0].style["-webkit-transform"] = "translate(-50%, -50%)";
 
+		let frame = $('<div>');
+		frame.addClass("frame");
+
+		var frameSizeMultiplier;
+		if(diameter < 10) {
+			frameSizeMultiplier = 3;
+		} else {
+			frameSizeMultiplier = 1.5;
+		}
+		
+		frame.height(diameter * frameSizeMultiplier);
+		frame.width(diameter * frameSizeMultiplier);
+		if(frame.height % 2 == 1) {
+			frame.height(frame.height() + 1);
+			frame.width(frame.width() + 1);
+		}
+
+		let frameLabel = $('<span>');
+		frameLabel.text(this.name);
+		frameLabel[0].style.top = -1 * frameLabel.height();
+		frameLabel.addClass("frameLabel");
+
+		frame.append(frameLabel);
+		$(appearance).append(frame);
+
 		//make object show its name when hovered over
 		appearance.on('mouseover', () => {
 			appearance.height(appearance.height() + 2);
 			appearance.width(appearance.width() + 2);
 
-			let frame = $('<div>');
-			frame.addClass("frame");
-
-			var frameSizeMultiplier;
-			if(diameter < 10) {
-				frameSizeMultiplier = 3;
-			} else {
-				frameSizeMultiplier = 1.5;
-			}
-			frame.height(diameter * frameSizeMultiplier);
-			frame.width(diameter * frameSizeMultiplier);
-			if(frame.height % 2 == 1) {
-				frame.height(frame.height() + 1);
-				frame.width(frame.width() + 1);
-			}
-
-			frame[0].style.border = "1px solid red";
-			frame[0].style.top = appearance[0].style.top;
-			frame[0].style.left = appearance[0].style.left;
-			frame[0].style["-webkit-transform"] = "translate(-50%, -50%)";
-
-			let frameLabel = $('<span>');
-			frameLabel.text(this.name);
-			frameLabel[0].style.color = 'white';
-			frameLabel[0].style.position = 'absolute';
-			frameLabel[0].style.top = -1 * frameLabel.height();
-
-			frame.append(frameLabel);
-			$('#viewport').prepend(frame);
+			frame.css('display', 'inline');			
 		});
 
 		//remove name when no longer hovered over
-		appearance.on('mouseout', () => {
+		appearance.on('mouseout', e => {
+			frame.css('display', 'none');	
 			appearance.height(appearance.height() - 2);
 			appearance.width(appearance.width() - 2);
-
-			//remove the frame
-			$('.frame').remove();
 		});
 
 		$('#viewport').append(appearance);

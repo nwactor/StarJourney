@@ -11,6 +11,7 @@ body {
 	background-color: black;
 	position: relative;
 	border-radius: 50%; /*circular*/
+	overflow: hidden;
 }
 
 #left-options, #right-options {
@@ -20,10 +21,21 @@ body {
 .celestialObject {
 	position: absolute;
 	border-radius: 50%; /*circular*/
+	/*Center frame around it*/
+	display: flex;
+	justify-content: center;
+  	align-items: center;
 }
 
 .frame {
-	position: absolute;
+	position: absolute; /* stops it from growing/shrinking based on the size of its label */
+	border: 1px solid red;
+	display: none;
+}
+
+.frameLabel {
+	/*position: relative;*/
+	color: white;
 }
 
 .v-container {
