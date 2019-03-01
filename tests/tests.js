@@ -120,7 +120,7 @@ function testDistances(viewPort) {
 // testDistances(viewPort);
 
 function testFullView(viewPort) {
-	viewPort.rotation.y = 90;
+	viewPort.rotation.y = 0;
 	viewPort.rotation.z = 0;
 	viewPort.fieldOfView = 180;
 	let center = new Position(0,0,0);

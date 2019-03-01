@@ -45,8 +45,8 @@ class ViewPort {
 		//get the object's spherical coordinates using the center of view as the axis
 		let objSphericalCoord = this.getSphericalCoordinateFromPosition(this.getPositionRelativeToCOV(object, centerOfView));
 		// let objSphericalCoord = this.getPositionRelativeToCOV(object, centerOfView);
-		if(object.name == 'right') {
-					console.log(this.getPositionRelativeToCOV(object, centerOfView));
+		if(object.name == 'front') {
+					// console.log(this.getPositionRelativeToCOV(object, centerOfView));
 					// console.log(objSphericalCoord);
 					// console.log(objSphericalCoord);
 		}
@@ -89,19 +89,19 @@ class ViewPort {
 		let horizontalDist = Math.cos(degreesToRadians(vDiffFromCenter)) * Math.sin(degreesToRadians(hDiffFromCenter));
 		let verticalDist = Math.sin(degreesToRadians(vDiffFromCenter));
 
-		if(object.name == "right") {
+		if(object.name == "front") {
 			// console.log(centerOfView.hAngle);
 			// console.log(objSphericalCoord);
 			// console.log(normalReferences);
-			console.log("ha: " + hAngleReference);
+			console.log("absolute ha: " + hAngleReference);
 			// console.log("measured h: " + radiansToDegrees(Math.asin(hDiffFromCenter / poleDistance_2D)));
-			console.log("va: " + vAngleReference);
-			console.log("hDif: " + hDiffFromCenter);
-			console.log("vDif: " + vDiffFromCenter);
+			console.log("absolute va: " + vAngleReference);
+			console.log("hDifFromCenter: " + hDiffFromCenter);
+			console.log("vDiffFromCenter: " + vDiffFromCenter);
 			// console.log("pole dist 2: " + poleDistance_2D);
 			// console.log("pole dist 3: " + poleDistance_3D);
-			console.log("h: " + horizontalDist);
-			console.log("v: " + verticalDist);
+			console.log("calculated h: " + horizontalDist);
+			console.log("calculated v: " + verticalDist);
 		}
 
 		let u = (horizontalDist /*/ (this.fieldOfView / 2)*/) * 100;
@@ -112,7 +112,7 @@ class ViewPort {
 		let transform = [
 			[Math.cos(degreesToRadians(this.rotation.x)), Math.sin(degreesToRadians(this.rotation.x))], //iHat
 			[-1 * Math.sin(degreesToRadians(this.rotation.x)), Math.cos(degreesToRadians(this.rotation.x))] //jHat
-		];
+		];	
 
 		//apply transform to u and v via matrix multiplication
 		let rotatedU = (u * transform[0][0]) + (v * transform[1][0]);
@@ -122,20 +122,30 @@ class ViewPort {
 	}
 	getPositionRelativeToCOV(object, centerOfView) {
 		//get the relative position of the object with relation to the normal axis
-		let objNormalRelPos = new Position(object.position.x - this.position.x, object.position.y - this.position.y, object.position.z - this.position.z);
-
+		let objRelPos = new Position(object.position.x - this.position.x, object.position.y - this.position.y, object.position.z - this.position.z);
+		// let sc = this.getSphericalCoordinateFromPosition(objRelPos);
+		
 		//get the relative position using the CoV as the x-axis
+		//the object's transform is the CoV's transform in reverse
 
-		// let sc = this.getSphericalCoordinateFromPosition(objNormalRelPos);
+		// let iHatCoV = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, centerOfView.hAngle, centerOfView.vAngle));
+		// let jHatCoV = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 90 + centerOfView.hAngle, centerOfView.vAngle);//centerOfView.vAngle));
+		// let kHatCoV = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, this.rotation.x, 90 + centerOfView.vAngle));// * Math.cos(degreesToRadians(sc.vAngle)))
 
-		let iHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0 - centerOfView.hAngle, 0 - centerOfView.vAngle));
-		let jHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 90 - centerOfView.hAngle, 0 - (this.rotation.x * -1)));//centerOfView.vAngle));
-		let zHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0 - centerOfView.hAngle, 90 - centerOfView.vAngle));// * Math.cos(degreesToRadians(sc.vAngle)))
+		let iHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0 - centerOfView.hAngle, (0 - centerOfView.vAngle) * Math.cos(degreesToRadians(centerOfView.hAngle - 0))));
+		let jHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 90 - centerOfView.hAngle, (0 - centerOfView.vAngle) * Math.cos(degreesToRadians(centerOfView.hAngle - 90))));
+		let kHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0, 90 - centerOfView.vAngle));// 0 - (this.rotation.x * -1) add in x-rotation
 
-		// //Apply the transform with some matrix multiplication
-		let newX = (objNormalRelPos.x * iHat.x) + (objNormalRelPos.y * jHat.x) + (objNormalRelPos.z * zHat.x);
-		let newY = (objNormalRelPos.x * iHat.y) + (objNormalRelPos.y * jHat.y) + (objNormalRelPos.z * zHat.y);
-		let newZ = (objNormalRelPos.x * iHat.z) + (objNormalRelPos.y * jHat.z) + (objNormalRelPos.z * zHat.z);
+		if(object.name == "front") {
+			console.log(iHat);
+			console.log(jHat);
+			console.log(kHat);
+		}
+
+		//Apply the transform with some matrix multiplication
+		let newX = (objRelPos.x * (iHat.x - centerOfView.origin.x)) + (objRelPos.y * (jHat.x - centerOfView.origin.x)) + (objRelPos.z * (kHat.x - centerOfView.origin.x));
+		let newY = (objRelPos.x * (iHat.y - centerOfView.origin.y)) + (objRelPos.y * (jHat.y - centerOfView.origin.y)) + (objRelPos.z * (kHat.y - centerOfView.origin.y));
+		let newZ = (objRelPos.x * (iHat.z - centerOfView.origin.z)) + (objRelPos.y * (jHat.z - centerOfView.origin.z)) + (objRelPos.z * (kHat.z - centerOfView.origin.z));
 		
 		// let newsc = new SphericalCoordinate(centerOfView.origin, 1, sc.hAngle - centerOfView.hAngle, sc.vAngle - centerOfView.vAngle);
 
@@ -143,7 +153,11 @@ class ViewPort {
 		// 	console.log(newsc);
 		// }
 
-		return new Position(newX, newY, newZ);
+		let adjustedPosition = new Position(newX, newY, newZ);
+		if(object.name == 'front') {
+			console.log(adjustedPosition);
+		}
+		return adjustedPosition;
 		// return newsc;
 	}
 	getViewCenter() {
