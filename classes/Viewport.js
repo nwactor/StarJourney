@@ -11,6 +11,10 @@ class ViewPort {
 		this.artMode = false;
 	}
 	render(celestialObjects) {
+		celestialObjects.sort((a, b) => {
+			return this.position.getDistance(b.position) - this.position.getDistance(a.position);
+		});
+
 		//clear the viewewport unless artMode is on
 		if(!this.artMode) {$('#viewport').empty();}
 
@@ -42,13 +46,16 @@ class ViewPort {
 		$('#view-pos-z').val(this.position.z);
 	}
 	get2DPositionCoordinates(object, centerOfView) {
+		if(object.name == 'back') { 
+			console.log("debugging");
+		}
 		//get the object's spherical coordinates using the center of view as the axis
-		let objSphericalCoord = this.getSphericalCoordinateFromPosition(this.getPositionRelativeToCOV(object, centerOfView));
-		// let objSphericalCoord = this.getPositionRelativeToCOV(object, centerOfView);
-		if(object.name == 'front') {
+		let obj3dCoord = this.getPositionRelativeToCOV(object, centerOfView);
+		let objSphericalCoord = this.getSphericalCoordinateFromRelativePosition(obj3dCoord);
+
+		if(object.name == 'back') {
 					// console.log(this.getPositionRelativeToCOV(object, centerOfView));
-					// console.log(objSphericalCoord);
-					// console.log(objSphericalCoord);
+					console.log(objSphericalCoord);
 		}
 		centerOfView = new SphericalCoordinate(this.position, 1, 0, 0);
 		//every set of H/Vangles can be flipped to produce the same point on the celestial sphere.
@@ -89,7 +96,7 @@ class ViewPort {
 		let horizontalDist = Math.cos(degreesToRadians(vDiffFromCenter)) * Math.sin(degreesToRadians(hDiffFromCenter));
 		let verticalDist = Math.sin(degreesToRadians(vDiffFromCenter));
 
-		if(object.name == "front") {
+		if(object.name == "back") {
 			// console.log(centerOfView.hAngle);
 			// console.log(objSphericalCoord);
 			// console.log(normalReferences);
@@ -123,20 +130,14 @@ class ViewPort {
 	getPositionRelativeToCOV(object, centerOfView) {
 		//get the relative position of the object with relation to the normal axis
 		let objRelPos = new Position(object.position.x - this.position.x, object.position.y - this.position.y, object.position.z - this.position.z);
-		// let sc = this.getSphericalCoordinateFromPosition(objRelPos);
 		
 		//get the relative position using the CoV as the x-axis
 		//the object's transform is the CoV's transform in reverse
-
-		// let iHatCoV = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, centerOfView.hAngle, centerOfView.vAngle));
-		// let jHatCoV = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 90 + centerOfView.hAngle, centerOfView.vAngle);//centerOfView.vAngle));
-		// let kHatCoV = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, this.rotation.x, 90 + centerOfView.vAngle));// * Math.cos(degreesToRadians(sc.vAngle)))
-
 		let iHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0 - centerOfView.hAngle, (0 - centerOfView.vAngle) * Math.cos(degreesToRadians(centerOfView.hAngle - 0))));
 		let jHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 90 - centerOfView.hAngle, (0 - centerOfView.vAngle) * Math.cos(degreesToRadians(centerOfView.hAngle - 90))));
 		let kHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0, 90 - centerOfView.vAngle));// 0 - (this.rotation.x * -1) add in x-rotation
 
-		if(object.name == "front") {
+		if(object.name == "back") {
 			console.log(iHat);
 			console.log(jHat);
 			console.log(kHat);
@@ -146,22 +147,41 @@ class ViewPort {
 		let newX = (objRelPos.x * (iHat.x - centerOfView.origin.x)) + (objRelPos.y * (jHat.x - centerOfView.origin.x)) + (objRelPos.z * (kHat.x - centerOfView.origin.x));
 		let newY = (objRelPos.x * (iHat.y - centerOfView.origin.y)) + (objRelPos.y * (jHat.y - centerOfView.origin.y)) + (objRelPos.z * (kHat.y - centerOfView.origin.y));
 		let newZ = (objRelPos.x * (iHat.z - centerOfView.origin.z)) + (objRelPos.y * (jHat.z - centerOfView.origin.z)) + (objRelPos.z * (kHat.z - centerOfView.origin.z));
-		
-		// let newsc = new SphericalCoordinate(centerOfView.origin, 1, sc.hAngle - centerOfView.hAngle, sc.vAngle - centerOfView.vAngle);
-
-		// if(object.name == 'front') {
-		// 	console.log(newsc);
-		// }
 
 		let adjustedPosition = new Position(newX, newY, newZ);
-		if(object.name == 'front') {
+		if(object.name == 'back') {
 			console.log(adjustedPosition);
 		}
 		return adjustedPosition;
-		// return newsc;
 	}
 	getViewCenter() {
 		return new SphericalCoordinate(this.position, 1, this.rotation.y, this.rotation.z);
+	}
+	getSphericalCoordinateFromRelativePosition(position) {
+		let origin = new Position(0,0,0);
+
+		let distance = origin.getDistance(position);
+		let hDistance = this.getDiagonalDistance(position.y, position.x);
+
+		let sinHAngle = position.y / hDistance; //opposite / hypotenuse
+		let hRadians = Math.asin(sinHAngle);
+		let hAngle = radiansToDegrees(hRadians);
+		if(isNaN(hAngle)) {hAngle = 0;}
+
+		let sinVAngle = position.z / distance; //opposite / hypotenuse
+		let vRadians = Math.asin(sinVAngle);
+		let vAngle = radiansToDegrees(vRadians);
+
+		//displays things with a negative x value correctly (goes halfway around)
+		if(position.x < origin.x) {
+			if(hAngle > 0) {
+				hAngle = 90 + (90 - hAngle);
+			} else {
+				hAngle = -90 + (-90 - hAngle);
+			}
+		}
+
+		return new SphericalCoordinate(new Position(0,0,0), distance, hAngle, vAngle);
 	}
 	getSphericalCoordinateFromPosition(position) {
 		let relativePosition = this.getRelativePosition(position);

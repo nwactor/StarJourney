@@ -123,6 +123,7 @@ function testFullView(viewPort) {
 	viewPort.rotation.y = 0;
 	viewPort.rotation.z = 0;
 	viewPort.fieldOfView = 180;
+	// viewPort.position = new Position(0,0,0);
 	let center = new Position(0,0,0);
 	
 	//vertical plane
@@ -172,7 +173,7 @@ function testFullView(viewPort) {
 	celestialObjects.push(hn90v45);
 	celestialObjects.push(hn90vn45);
 	celestialObjects.push(h90vn45);
-
+	
 	viewPort.render(celestialObjects);
 }
 

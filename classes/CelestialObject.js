@@ -29,7 +29,7 @@ class CelestialObject {
 		appearance.height(diameter);
 		appearance.width(diameter);
 
-		//account for the object's diameter when displaying the div
+		//center the object on its location rather than having location correspond to the top left corner
 		appearance[0].style["-webkit-transform"] = "translate(-50%, -50%)";
 
 		let frame = $('<div>');
