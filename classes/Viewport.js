@@ -46,46 +46,22 @@ class ViewPort {
 		$('#view-pos-z').val(this.position.z);
 	}
 	get2DPositionCoordinates(object, centerOfView) {
-		if(object.name == 'back') { 
-			console.log("debugging");
-		}
+		// if(object.name == 'back') { 
+		// 	console.log("debugging");
+		// }
 		//get the object's spherical coordinates using the center of view as the axis
 		let obj3dCoord = this.getPositionRelativeToCOV(object, centerOfView);
 		let objSphericalCoord = this.getSphericalCoordinateFromRelativePosition(obj3dCoord);
 
-		if(object.name == 'back') {
-					// console.log(this.getPositionRelativeToCOV(object, centerOfView));
-					console.log(objSphericalCoord);
-		}
+		// if(object.name == 'back') {
+		// 			// console.log(this.getPositionRelativeToCOV(object, centerOfView));
+		// 			console.log(objSphericalCoord);
+		// }
 		centerOfView = new SphericalCoordinate(this.position, 1, 0, 0);
-		//every set of H/Vangles can be flipped to produce the same point on the celestial sphere.
-		//here, we get the flipped set of coordinates, so we can use the one whose numbers are closer
-		//to the center of view.
-		let flippedSphericalCoord = this.getFlippedSphericalCoord(objSphericalCoord);
-
-		//find whether it is better to use positive or negative angles for each set of coordinates
-		let normalReferences = this.findBestAngleReferences(centerOfView, objSphericalCoord);
-		let flippedReferences = this.findBestAngleReferences(centerOfView, flippedSphericalCoord);
-
-		let normalDistance = this.getDiagonalDistance(normalReferences.h - centerOfView.hAngle, normalReferences.v - centerOfView.vAngle);
-		let flippedDistance = this.getDiagonalDistance(flippedReferences.h - centerOfView.hAngle, flippedReferences.v - centerOfView.vAngle);
 		
-		let hAngleReference;
-		let vAngleReference;
-		
-		//compare find which set of coordinates is better for the center of view
-		if(normalDistance < flippedDistance) {
-			hAngleReference = normalReferences.h;
-			vAngleReference = normalReferences.v;
-		} else {
-			hAngleReference = flippedReferences.h;
-			vAngleReference = flippedReferences.v;
-		}
-
-		
-		//get the raw angular distance of the object from the center of view
-		let hDiffFromCenter = hAngleReference - centerOfView.hAngle;
-		let vDiffFromCenter = vAngleReference - centerOfView.vAngle;
+		let angleDiffs = this.getAngleDiffs(centerOfView, objSphericalCoord);
+		let hDiffFromCenter = angleDiffs.hDiffFromCenter;
+		let vDiffFromCenter = angleDiffs.vDiffFromCenter;
 
 		let objectIsVisible = true;
 		if(!(Math.abs(hDiffFromCenter) <= this.fieldOfView / 2 && Math.abs(vDiffFromCenter) <= this.fieldOfView / 2)) {
@@ -96,20 +72,20 @@ class ViewPort {
 		let horizontalDist = Math.cos(degreesToRadians(vDiffFromCenter)) * Math.sin(degreesToRadians(hDiffFromCenter));
 		let verticalDist = Math.sin(degreesToRadians(vDiffFromCenter));
 
-		if(object.name == "back") {
-			// console.log(centerOfView.hAngle);
-			// console.log(objSphericalCoord);
-			// console.log(normalReferences);
-			console.log("absolute ha: " + hAngleReference);
-			// console.log("measured h: " + radiansToDegrees(Math.asin(hDiffFromCenter / poleDistance_2D)));
-			console.log("absolute va: " + vAngleReference);
-			console.log("hDifFromCenter: " + hDiffFromCenter);
-			console.log("vDiffFromCenter: " + vDiffFromCenter);
-			// console.log("pole dist 2: " + poleDistance_2D);
-			// console.log("pole dist 3: " + poleDistance_3D);
-			console.log("calculated h: " + horizontalDist);
-			console.log("calculated v: " + verticalDist);
-		}
+		// if(object.name == "back") {
+		// 	// console.log(centerOfView.hAngle);
+		// 	// console.log(objSphericalCoord);
+		// 	// console.log(normalReferences);
+		// 	console.log("absolute ha: " + hAngleReference);
+		// 	// console.log("measured h: " + radiansToDegrees(Math.asin(hDiffFromCenter / poleDistance_2D)));
+		// 	console.log("absolute va: " + vAngleReference);
+		// 	console.log("hDifFromCenter: " + hDiffFromCenter);
+		// 	console.log("vDiffFromCenter: " + vDiffFromCenter);
+		// 	// console.log("pole dist 2: " + poleDistance_2D);
+		// 	// console.log("pole dist 3: " + poleDistance_3D);
+		// 	console.log("calculated h: " + horizontalDist);
+		// 	console.log("calculated v: " + verticalDist);
+		// }
 
 		let u = (horizontalDist /*/ (this.fieldOfView / 2)*/) * 100;
 		let v = (verticalDist /*/ (this.fieldOfView / 2)*/) * 100;
@@ -128,35 +104,52 @@ class ViewPort {
 		return {x: rotatedU, y: rotatedV, isVisible: objectIsVisible};
 	}
 	getPositionRelativeToCOV(object, centerOfView) {
-		//get the relative position of the object with relation to the normal axis
-		let objRelPos = new Position(object.position.x - this.position.x, object.position.y - this.position.y, object.position.z - this.position.z);
-		
-		//get the relative position using the CoV as the x-axis
-		//the object's transform is the CoV's transform in reverse
-		let iHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0 - centerOfView.hAngle, (0 - centerOfView.vAngle) * Math.cos(degreesToRadians(centerOfView.hAngle - 0))));
-		let jHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 90 - centerOfView.hAngle, (0 - centerOfView.vAngle) * Math.cos(degreesToRadians(centerOfView.hAngle - 90))));
-		let kHat = this.getPositionFromSphericalCoord(new SphericalCoordinate(centerOfView.origin, 1, 0, 90 - centerOfView.vAngle));// 0 - (this.rotation.x * -1) add in x-rotation
+		var objSphericalCoord = this.getSphericalCoordinateFromPosition(object.position);
+		var angleDiffs = this.getAngleDiffs(centerOfView, objSphericalCoord);
 
-		if(object.name == "back") {
-			console.log(iHat);
-			console.log(jHat);
-			console.log(kHat);
+		//variable names don't do justice to the following... it really needs a diagram to make sense
+
+		//Right side Triangle
+		var objHorizontalDistance = Math.cos(degreesToRadians(objSphericalCoord.vAngle)) / 1; // A
+		var objVerticalDistance = Math.sin(degreesToRadians(objSphericalCoord.vAngle)) / 1; // C
+
+		//Bottom Triangle
+		var covPartialHorizontalDistance = objHorizontalDistance * Math.cos(degreesToRadians(angleDiffs.hDiffFromCenter)); // B
+		var YPOS = objHorizontalDistance * Math.sin(degreesToRadians(angleDiffs.hDiffFromCenter)); // D, or the distance from the cov's X-Plane
+
+		//Left side Triangle
+		var leftSideAngle = radiansToDegrees(Math.atan(objVerticalDistance / covPartialHorizontalDistance)); // x
+		var leftSideDistance; // E
+		leftSideAngle == 0 ?
+			leftSideDistance = covPartialHorizontalDistance : leftSideDistance = objVerticalDistance / Math.sin(degreesToRadians(leftSideAngle));
+
+		//important triangle
+		var covVerticalAngleDiff = Math.abs(centerOfView.vAngle - leftSideAngle); // y
+		var ZPOS = leftSideDistance * Math.sin(degreesToRadians(covVerticalAngleDiff));
+		var XPOS = leftSideDistance * Math.cos(degreesToRadians(covVerticalAngleDiff));
+
+		//determine the sign of these values
+		if(object.name == "right") {
+			console.log();
 		}
-
-		//Apply the transform with some matrix multiplication
-		let newX = (objRelPos.x * (iHat.x - centerOfView.origin.x)) + (objRelPos.y * (jHat.x - centerOfView.origin.x)) + (objRelPos.z * (kHat.x - centerOfView.origin.x));
-		let newY = (objRelPos.x * (iHat.y - centerOfView.origin.y)) + (objRelPos.y * (jHat.y - centerOfView.origin.y)) + (objRelPos.z * (kHat.y - centerOfView.origin.y));
-		let newZ = (objRelPos.x * (iHat.z - centerOfView.origin.z)) + (objRelPos.y * (jHat.z - centerOfView.origin.z)) + (objRelPos.z * (kHat.z - centerOfView.origin.z));
-
-		let adjustedPosition = new Position(newX, newY, newZ);
-		if(object.name == 'back') {
-			console.log(adjustedPosition);
+		if(centerOfView.vAngle > leftSideAngle && this.getDifferenceBetweenAngles(centerOfView.hAngle, objSphericalCoord.hAngle) <= 90) {ZPOS *= -1;}
+		// if(Math.abs(angleDiffs.hDiffFromCenter) > 90 && Math.abs(angleDiffs.vDiffFromCenter) < 90 ||
+		// 	Math.abs(angleDiffs.vDiffFromCenter) > 90 && Math.abs(angleDiffs.hDiffFromCenter) < 90) {
+		// 	XPOS *= -1;
+		// }
+		if(object.name == "right") {
+			console.log("XPOS: " + XPOS);
+			console.log("YPOS: " + YPOS);
+			console.log("ZPOS: " + ZPOS);
 		}
-		return adjustedPosition;
+		var relativePosition = new Position(XPOS, YPOS, ZPOS);
+		return relativePosition;
 	}
 	getViewCenter() {
 		return new SphericalCoordinate(this.position, 1, this.rotation.y, this.rotation.z);
 	}
+	//get the spherical coordinates of a position using the origin as the origin
+	//(this is useful when the position given is already relative)
 	getSphericalCoordinateFromRelativePosition(position) {
 		let origin = new Position(0,0,0);
 
@@ -183,6 +176,7 @@ class ViewPort {
 
 		return new SphericalCoordinate(new Position(0,0,0), distance, hAngle, vAngle);
 	}
+	//Get the spherical coordinates of a 3d position using the viewport as the origin
 	getSphericalCoordinateFromPosition(position) {
 		let relativePosition = this.getRelativePosition(position);
 		let origin = new Position(0,0,0);
@@ -216,6 +210,42 @@ class ViewPort {
 
 		return new SphericalCoordinate(new Position(0,0,0), distance, hAngle, vAngle);
 	}
+	getAngleDiffs(centerOfView, objSphericalCoord) {
+		//every set of H/Vangles can be "flipped" to produce the same point on the celestial sphere.
+		//here, we get the flipped set of coordinates, so we can use the one whose numbers are closer
+		//to the center of view.
+		let flippedSphericalCoord = this.getFlippedSphericalCoord(objSphericalCoord);
+
+		//find whether it is better to use positive or negative angles for each set of coordinates
+		let normalReferences = this.findBestAngleReferences(centerOfView, objSphericalCoord);
+		let flippedReferences = this.findBestAngleReferences(centerOfView, flippedSphericalCoord);
+
+		let normalDistance = this.getDiagonalDistance(normalReferences.h - centerOfView.hAngle, normalReferences.v - centerOfView.vAngle);
+		let flippedDistance = this.getDiagonalDistance(flippedReferences.h - centerOfView.hAngle, flippedReferences.v - centerOfView.vAngle);
+		
+		let hAngleReference;
+		let vAngleReference;
+		
+		//compare find which set of coordinates is better for the center of view
+		if(normalDistance < flippedDistance) {
+			hAngleReference = normalReferences.h;
+			vAngleReference = normalReferences.v;
+		} else {
+			hAngleReference = flippedReferences.h;
+			vAngleReference = flippedReferences.v;
+		}
+
+		//get the raw angular distance of the object from the center of view
+		let hDiffFromCenter = hAngleReference - centerOfView.hAngle;
+		let vDiffFromCenter = vAngleReference - centerOfView.vAngle;
+
+		return {
+			"hDiffFromCenter": hDiffFromCenter,
+			"vDiffFromCenter": vDiffFromCenter,
+			"hAngleReference": hAngleReference,
+			"vAngleReference": vAngleReference
+		};
+	} 
 	getFlippedSphericalCoord(sCoord) {
 		return new SphericalCoordinate(sCoord.origin, sCoord.distance, 
 			(sCoord.hAngle + 180) % 360,
@@ -234,38 +264,30 @@ class ViewPort {
 		/* determine whether it is approriate to use the positive 
 		or negative interpretations of the object's angles (for example -60 or 300).
 		We want whichever ones are closest to the center of view.*/
-		var bestReferences = {};
-
-		//0 is a special case, because the equivalent angle could be 0, 360, or -360.
-		//getEquivalentAngle(0) returns 360, so the -360 case still has to be checked here.
-		if(objSphericalCoord.hAngle % 360 == 0) {
-			bestReferences.h = this.getBestReferenceForZero(centerOfView.hAngle);
-		} else { //the usual case
-			let hDiff = Math.abs(objSphericalCoord.hAngle - centerOfView.hAngle);
-			let hDiffEquivalent = Math.abs(getEquivalentAngle(objSphericalCoord.hAngle) - centerOfView.hAngle);
-
-			if(hDiff < hDiffEquivalent) {
-				bestReferences.h = objSphericalCoord.hAngle;
-			} else {
-				bestReferences.h = getEquivalentAngle(objSphericalCoord.hAngle);
-			}
-		}
-
-
-		if(objSphericalCoord.vAngle % 360 == 0) { //same 0 case as above
-			bestReferences.v = this.getBestReferenceForZero(centerOfView.vAngle);
-		} else {
-			let vDiff = Math.abs(objSphericalCoord.vAngle - centerOfView.vAngle);
-			let vDiffEquivalent = Math.abs(getEquivalentAngle(objSphericalCoord.vAngle) - centerOfView.vAngle);
-
-			if(vDiff < vDiffEquivalent) {
-				bestReferences.v = objSphericalCoord.vAngle;
-			} else {
-				bestReferences.v = getEquivalentAngle(objSphericalCoord.vAngle);
-			}
-		}
+		var bestReferences = {
+			h: this.getBestAngleReference(centerOfView.hAngle, objSphericalCoord.hAngle),
+			v: this.getBestAngleReference(centerOfView.vAngle, objSphericalCoord.vAngle)
+		};
 
 		return bestReferences;
+	}
+	getBestAngleReference(anchor, other) {
+		//0 is a special case, because the equivalent angle could be 0, 360, or -360.
+		//getEquivalentAngle(0) returns 360, so the -360 case still has to be checked here.
+		if(other % 360 == 0) {
+			return this.getBestReferenceForZero(anchor);
+		} else { //the usual case
+			let equivalentAngleOther = getEquivalentAngle(other);
+			
+			let difference = Math.abs(other - anchor);
+			let equivalentDifference = Math.abs(equivalentAngleOther - anchor);
+
+			if(difference < equivalentDifference) {
+				return other;
+			} else {
+				return equivalentAngleOther;
+			}
+		}
 	}
 	getBestReferenceForZero(centerAngle) {
 		let zeroDiff = Math.abs(0 - centerAngle);
@@ -285,6 +307,9 @@ class ViewPort {
 				return 360;
 			}
 		}
+	}
+	getDifferenceBetweenAngles(anchor, other) {
+		return Math.abs(anchor - this.getBestAngleReference(anchor, other));
 	}
 	convertAnglesToCartesian(hDiff, vDiff) {
 		if(hDiff < 0) {
