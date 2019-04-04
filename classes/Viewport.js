@@ -106,6 +106,7 @@ class ViewPort {
 	getPositionRelativeToCOV(object, centerOfView) {
 		var objSphericalCoord = this.getSphericalCoordinateFromPosition(object.position);
 		var angleDiffs = this.getAngleDiffs(centerOfView, objSphericalCoord);
+		var oppositeHemispheres = this.areCoordsInOppositeHemispheres(centerOfView, objSphericalCoord);
 
 		//variable names don't do justice to the following... it really needs a diagram to make sense
 
@@ -124,24 +125,47 @@ class ViewPort {
 			leftSideDistance = covPartialHorizontalDistance : leftSideDistance = objVerticalDistance / Math.sin(degreesToRadians(leftSideAngle));
 
 		//important triangle
-		var covVerticalAngleDiff = Math.abs(centerOfView.vAngle - leftSideAngle); // y
+		var covVerticalAngleDiff; // y
+		if(this.isSphericalCoordBehindCoV(centerOfView, objSphericalCoord)) {
+			YPOS *= -1;
+			if(Math.abs(angleDiffs.vDiffFromCenter) > 90) {
+				covVerticalAngleDiff = leftSideAngle - centerOfView.vAngle;
+			} else {
+				covVerticalAngleDiff = (90 - leftSideAngle) + (90 - centerOfView.vAngle);
+			}
+		} else {
+			covVerticalAngleDiff = leftSideAngle - centerOfView.vAngle;
+		}
+
 		var ZPOS = leftSideDistance * Math.sin(degreesToRadians(covVerticalAngleDiff));
 		var XPOS = leftSideDistance * Math.cos(degreesToRadians(covVerticalAngleDiff));
 
 		//determine the sign of these values
-		if(object.name == "right") {
+		if(object.name == "front") {
 			console.log();
 		}
-		if(centerOfView.vAngle > leftSideAngle && this.getDifferenceBetweenAngles(centerOfView.hAngle, objSphericalCoord.hAngle) <= 90) {ZPOS *= -1;}
-		// if(Math.abs(angleDiffs.hDiffFromCenter) > 90 && Math.abs(angleDiffs.vDiffFromCenter) < 90 ||
-		// 	Math.abs(angleDiffs.vDiffFromCenter) > 90 && Math.abs(angleDiffs.hDiffFromCenter) < 90) {
-		// 	XPOS *= -1;
-		// }
-		if(object.name == "right") {
-			console.log("XPOS: " + XPOS);
-			console.log("YPOS: " + YPOS);
-			console.log("ZPOS: " + ZPOS);
+		// console.log(object.name);
+		// console.log("H: " + angleDiffs.hDiffFromCenter);
+		// console.log("V: " + angleDiffs.vDiffFromCenter);
+		// console.log("XPOS: " + XPOS);
+		// console.log("YPOS: " + YPOS);
+		// console.log("ZPOS: " + ZPOS);
+		// console.log("--------");
+		if(oppositeHemispheres) {
+			if(XPOS > 0) {XPOS *= -1;}
 		}
+		if((Math.abs(centerOfView.vAngle) == 90 || Math.abs(getEquivalentAngle(centerOfView.vAngle)) == 90) && Math.abs(centerOfView.hAngle) % 90 == 0) {
+			YPOS *= -1;
+		}
+		if(Math.abs(centerOfView.vAngle) > 90) {
+			YPOS *= -1;
+		}
+		
+		// if(object.name == "right") {
+		// 	console.log("XPOS: " + XPOS);
+		// 	console.log("YPOS: " + YPOS);
+		// 	console.log("ZPOS: " + ZPOS);
+		// }
 		var relativePosition = new Position(XPOS, YPOS, ZPOS);
 		return relativePosition;
 	}
@@ -275,7 +299,7 @@ class ViewPort {
 		//0 is a special case, because the equivalent angle could be 0, 360, or -360.
 		//getEquivalentAngle(0) returns 360, so the -360 case still has to be checked here.
 		if(other % 360 == 0) {
-			return this.getBestReferenceForZero(anchor);
+			return this.getBestAngleReferenceForZero(anchor);
 		} else { //the usual case
 			let equivalentAngleOther = getEquivalentAngle(other);
 			
@@ -289,7 +313,7 @@ class ViewPort {
 			}
 		}
 	}
-	getBestReferenceForZero(centerAngle) {
+	getBestAngleReferenceForZero(centerAngle) {
 		let zeroDiff = Math.abs(0 - centerAngle);
 		let negativeDiff = Math.abs(-360 - centerAngle);
 		let positiveDiff = Math.abs(360 - centerAngle);
@@ -310,6 +334,18 @@ class ViewPort {
 	}
 	getDifferenceBetweenAngles(anchor, other) {
 		return Math.abs(anchor - this.getBestAngleReference(anchor, other));
+	}
+	areCoordsInOppositeHemispheres(coordA, coordB) {
+		var angleDiffs = this.getAngleDiffs(coordA, coordB);
+		if(Math.abs(angleDiffs.hDiffFromCenter) > 90) {
+			return Math.abs(angleDiffs.vDiffFromCenter) < 90;
+		} else {
+			return Math.abs(angleDiffs.vDiffFromCenter) > 90;
+		}
+	}
+	isSphericalCoordBehindCoV(centerOfView, sphericalCoord) {
+		var neutralCov = new SphericalCoordinate(centerOfView.origin, centerOfView.distance, centerOfView.hAngle, 0);
+		return this.areCoordsInOppositeHemispheres(neutralCov, sphericalCoord);
 	}
 	convertAnglesToCartesian(hDiff, vDiff) {
 		if(hDiff < 0) {
