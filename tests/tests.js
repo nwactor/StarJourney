@@ -121,20 +121,20 @@ function testDistances(viewPort) {
 
 function testFullView(viewPort) {
 	viewPort.rotation.y = 0;
-	viewPort.rotation.z = -90;
+	viewPort.rotation.z = 90;
 	viewPort.fieldOfView = 180;
 	// viewPort.position = new Position(0,0,0);
 	let center = new Position(0,0,0);
 	
 	//vertical plane
 	var front = new CelestialObject('front', 'red', 1, getOrbitalPoint(center, 20, 0, 0));
-	var h0v45 = new CelestialObject('h0v45', 'magenta', 1, getOrbitalPoint(center, 20, 0, 45));
+	var h0v45 = new CelestialObject('h0v45', 'gray', 1, getOrbitalPoint(center, 20, 0, 45));
 	var top = new CelestialObject('top', 'white', 1, getOrbitalPoint(center, 20, 0, 90));
-	var h180v45 = new CelestialObject('h180v45', 'magenta', 1, getOrbitalPoint(center, 20, 180, 45)); //0, 135
+	var h180v45 = new CelestialObject('h180v45', 'gray', 1, getOrbitalPoint(center, 20, 180, 45)); //0, 135
 	var back = new CelestialObject('back', 'cyan', 1, getOrbitalPoint(center, 20, 0, 180)); // 180, 0
-	var h180vn45 = new CelestialObject('h180vn45', 'magenta', 1, getOrbitalPoint(center, 20, 180, -45));
+	var h180vn45 = new CelestialObject('h180vn45', 'brown', 1, getOrbitalPoint(center, 20, 180, -45));
 	var bottom = new CelestialObject('bottom', 'orange', 1, getOrbitalPoint(center, 20, 0, -90));
-	var h0vn45 = new CelestialObject('h0vn45', 'magenta', 1, getOrbitalPoint(center, 20, 0, -45));
+	var h0vn45 = new CelestialObject('h0vn45', 'brown', 1, getOrbitalPoint(center, 20, 0, -45));
 
 	//horizontal plane
 	//front
@@ -142,15 +142,15 @@ function testFullView(viewPort) {
 	var right = new CelestialObject('right', 'green', 1, getOrbitalPoint(center, 20, 90, 0));
 	var h135v0 = new CelestialObject('h135v0', 'magenta', 1, getOrbitalPoint(center, 20, 135, 0));
 	//back
-	var hn135v0 = new CelestialObject('hn135v0', 'magenta', 1, getOrbitalPoint(center, 20, -135, 0));
+	var hn135v0 = new CelestialObject('hn135v0', 'teal', 1, getOrbitalPoint(center, 20, -135, 0));
 	var left = new CelestialObject('left', 'yellow', 1, getOrbitalPoint(center, 20, -90, 0));
-	var hn45v0 = new CelestialObject('hn45v0', 'magenta', 1, getOrbitalPoint(center, 20, -45, 0));
+	var hn45v0 = new CelestialObject('hn45v0', 'teal', 1, getOrbitalPoint(center, 20, -45, 0));
 	//front
 
 	//perpendicular vertical plane
 	var h90v45 = new CelestialObject('h90v45', 'magenta', 1, getOrbitalPoint(center, 20, 90, 45));
-	var hn90v45 = new CelestialObject('hn90v45', 'magenta', 1, getOrbitalPoint(center, 20, -90, 45));
-	var hn90vn45 = new CelestialObject('hn90vn45', 'magenta', 1, getOrbitalPoint(center, 20, -90, -45));
+	var hn90v45 = new CelestialObject('hn90v45', 'teal', 1, getOrbitalPoint(center, 20, -90, 45));
+	var hn90vn45 = new CelestialObject('hn90vn45', 'teal', 1, getOrbitalPoint(center, 20, -90, -45));
 	var h90vn45 = new CelestialObject('h90vn45', 'magenta', 1, getOrbitalPoint(center, 20, 90, -45));
 
 	celestialObjects.push(front);

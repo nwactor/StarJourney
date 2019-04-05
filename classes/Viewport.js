@@ -54,7 +54,7 @@ class ViewPort {
 		let objSphericalCoord = this.getSphericalCoordinateFromRelativePosition(obj3dCoord);
 
 		// if(object.name == 'back') {
-		// 			// console.log(this.getPositionRelativeToCOV(object, centerOfView));
+		// 			// console.log(this.getCoordRelativeToCOV(object, centerOfView));
 		// 			console.log(objSphericalCoord);
 		// }
 		centerOfView = new SphericalCoordinate(this.position, 1, 0, 0);
@@ -79,7 +79,7 @@ class ViewPort {
 		// 	console.log("absolute ha: " + hAngleReference);
 		// 	// console.log("measured h: " + radiansToDegrees(Math.asin(hDiffFromCenter / poleDistance_2D)));
 		// 	console.log("absolute va: " + vAngleReference);
-		// 	console.log("hDifFromCenter: " + hDiffFromCenter);
+		// 	console.log("hDiffFromCenter: " + hDiffFromCenter);
 		// 	console.log("vDiffFromCenter: " + vDiffFromCenter);
 		// 	// console.log("pole dist 2: " + poleDistance_2D);
 		// 	// console.log("pole dist 3: " + poleDistance_3D);
@@ -116,10 +116,17 @@ class ViewPort {
 
 		//Bottom Triangle
 		var covPartialHorizontalDistance = objHorizontalDistance * Math.cos(degreesToRadians(angleDiffs.hDiffFromCenter)); // B
+		//account for rounding errors
+		if(angleDiffs.hDiffFromCenter % 270 == 0 && angleDiffs.hDiffFromCenter != 0 || Math.abs(angleDiffs.hDiffFromCenter) == 90) {
+			covPartialHorizontalDistance = 0;
+		}
 		var YPOS = objHorizontalDistance * Math.sin(degreesToRadians(angleDiffs.hDiffFromCenter)); // D, or the distance from the cov's X-Plane
 
 		//Left side Triangle
 		var leftSideAngle = radiansToDegrees(Math.atan(objVerticalDistance / covPartialHorizontalDistance)); // x
+		if(covPartialHorizontalDistance == 0) {
+			leftSideAngle = 90;
+		}
 		var leftSideDistance; // E
 		leftSideAngle == 0 ?
 			leftSideDistance = covPartialHorizontalDistance : leftSideDistance = objVerticalDistance / Math.sin(degreesToRadians(leftSideAngle));
@@ -138,10 +145,14 @@ class ViewPort {
 		}
 
 		var ZPOS = leftSideDistance * Math.sin(degreesToRadians(covVerticalAngleDiff));
+		//account for rounding errors
+		if(covVerticalAngleDiff % 180 == 0) {
+			ZPOS = 0;
+		}
 		var XPOS = leftSideDistance * Math.cos(degreesToRadians(covVerticalAngleDiff));
 
 		//determine the sign of these values
-		if(object.name == "front") {
+		if(object.name == "h90v45") {
 			console.log();
 		}
 		// console.log(object.name);
@@ -154,12 +165,18 @@ class ViewPort {
 		if(oppositeHemispheres) {
 			if(XPOS > 0) {XPOS *= -1;}
 		}
-		if((Math.abs(centerOfView.vAngle) == 90 || Math.abs(getEquivalentAngle(centerOfView.vAngle)) == 90) && Math.abs(centerOfView.hAngle) % 90 == 0) {
+		if(Math.abs(centerOfView.vAngle) == 90 && ZPOS == 0) {
 			YPOS *= -1;
 		}
-		if(Math.abs(centerOfView.vAngle) > 90) {
-			YPOS *= -1;
-		}
+		// if(Math.abs(centerOfView.vAngle) >= 90 && Math.abs(centerOfView.hAngle) % 90 == 0) {
+		// 	YPOS *= -1;
+		// }
+		// if((Math.abs(centerOfView.vAngle) == 90 && centerOfView.hAngle == 0 || (Math.abs(getEquivalentAngle(centerOfView.vAngle)) == 90) && Math.abs(centerOfView.hAngle) % 90 == 0 && centerOfView.hAngle != 0)) {
+		// 	YPOS *= -1;
+		// }
+		// if(Math.abs(centerOfView.vAngle) > 90) {
+		// 	YPOS *= -1;
+		// }
 		
 		// if(object.name == "right") {
 		// 	console.log("XPOS: " + XPOS);
@@ -376,7 +393,19 @@ class ViewPort {
 		return new Position(
 			position.x - this.position.x,
 			position.y - this.position.y,
-			position.z - this.position.z,
+			position.z - this.position.z
+		);
+	}
+	getNormalizedPosition(position) {
+		var relativePosition = this.getRelativePosition(position);
+		var distance = this.position.getDistance(position);
+		if (distance == 0) {
+			return new Position(0,0,0);
+		}
+		return new Position(
+			relativePosition.x / distance,
+			relativePosition.y / distance,
+			relativePosition.z / distance
 		);
 	}
 	getDistanceToNearestPole(vAngle) {

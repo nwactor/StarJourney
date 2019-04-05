@@ -11,11 +11,13 @@ viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 135);
 celestialObjects = [];
 
 function createSolarSystem(viewPort) {
-	viewPort.position.x = -92960000;
-	viewPort.position = getOrbitalPoint(new Position(0,0,0), 92960000, 180, 0);
+	// viewPort.position.x = -92960000;
+	// viewPort.position = getOrbitalPoint(new Position(0,0,0), 92960000, 180, 0);
+	viewPort.position.z = 900000000;
+	viewPort.rotation.z = -90;
 
 	var sun = new CelestialObject('Sun', 'yellow', sunRadius, {x: 0, y: 0, z: 0});
-	var mercury = new CelestialObject('Mercury', 'gray', 3032, getOrbitalPoint(sun.position, million(35.98), 100, 0));
+	var mercury = new CelestialObject('Mercury', 'gray', 3032, getOrbitalPoint(sun.position, million(35.98), 90, 0));
 	var venus = new CelestialObject('Venus', '#f6d8a5', 6052, getOrbitalPoint(sun.position, 67237910, 140, 0));
 	var earth = new CelestialObject('Earth', '#89a1e9', 7917.5, getOrbitalPoint(sun.position, 92960000, 179.9, 0));
 	var moon = new CelestialObject('Moon', '#F5F3CE', 1079, getOrbitalPoint(earth.position, 238900, 270, 0));
