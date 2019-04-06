@@ -53,10 +53,6 @@ class ViewPort {
 		let obj3dCoord = this.getPositionRelativeToCOV(object, centerOfView);
 		let objSphericalCoord = this.getSphericalCoordinateFromRelativePosition(obj3dCoord);
 
-		// if(object.name == 'back') {
-		// 			// console.log(this.getCoordRelativeToCOV(object, centerOfView));
-		// 			console.log(objSphericalCoord);
-		// }
 		centerOfView = new SphericalCoordinate(this.position, 1, 0, 0);
 		
 		let angleDiffs = this.getAngleDiffs(centerOfView, objSphericalCoord);
@@ -71,21 +67,6 @@ class ViewPort {
 
 		let horizontalDist = Math.cos(degreesToRadians(vDiffFromCenter)) * Math.sin(degreesToRadians(hDiffFromCenter));
 		let verticalDist = Math.sin(degreesToRadians(vDiffFromCenter));
-
-		// if(object.name == "back") {
-		// 	// console.log(centerOfView.hAngle);
-		// 	// console.log(objSphericalCoord);
-		// 	// console.log(normalReferences);
-		// 	console.log("absolute ha: " + hAngleReference);
-		// 	// console.log("measured h: " + radiansToDegrees(Math.asin(hDiffFromCenter / poleDistance_2D)));
-		// 	console.log("absolute va: " + vAngleReference);
-		// 	console.log("hDiffFromCenter: " + hDiffFromCenter);
-		// 	console.log("vDiffFromCenter: " + vDiffFromCenter);
-		// 	// console.log("pole dist 2: " + poleDistance_2D);
-		// 	// console.log("pole dist 3: " + poleDistance_3D);
-		// 	console.log("calculated h: " + horizontalDist);
-		// 	console.log("calculated v: " + verticalDist);
-		// }
 
 		let u = (horizontalDist /*/ (this.fieldOfView / 2)*/) * 100;
 		let v = (verticalDist /*/ (this.fieldOfView / 2)*/) * 100;
@@ -104,6 +85,9 @@ class ViewPort {
 		return {x: rotatedU, y: rotatedV, isVisible: objectIsVisible};
 	}
 	getPositionRelativeToCOV(object, centerOfView) {
+		if(object.name == "Neptune") {
+			console.log();
+		}
 		var objSphericalCoord = this.getSphericalCoordinateFromPosition(object.position);
 		var angleDiffs = this.getAngleDiffs(centerOfView, objSphericalCoord);
 		var oppositeHemispheres = this.areCoordsInOppositeHemispheres(centerOfView, objSphericalCoord);
@@ -116,20 +100,19 @@ class ViewPort {
 
 		//Bottom Triangle
 		var covPartialHorizontalDistance = objHorizontalDistance * Math.cos(degreesToRadians(angleDiffs.hDiffFromCenter)); // B
-		//account for rounding errors
-		if(angleDiffs.hDiffFromCenter % 270 == 0 && angleDiffs.hDiffFromCenter != 0 || Math.abs(angleDiffs.hDiffFromCenter) == 90) {
-			covPartialHorizontalDistance = 0;
-		}
+		if(isCosZero(angleDiffs.hDiffFromCenter)) { covPartialHorizontalDistance = 0; } //account for rounding errors
 		var YPOS = objHorizontalDistance * Math.sin(degreesToRadians(angleDiffs.hDiffFromCenter)); // D, or the distance from the cov's X-Plane
+		if(isSinZero(angleDiffs.hDiffFromCenter)) { YPOS = 0; } //acount for rounding errors
 
 		//Left side Triangle
 		var leftSideAngle = radiansToDegrees(Math.atan(objVerticalDistance / covPartialHorizontalDistance)); // x
-		if(covPartialHorizontalDistance == 0) {
-			leftSideAngle = 90;
-		}
+		if(covPartialHorizontalDistance == 0) { leftSideAngle = 90; } //account for divide by 0 error
 		var leftSideDistance; // E
-		leftSideAngle == 0 ?
-			leftSideDistance = covPartialHorizontalDistance : leftSideDistance = objVerticalDistance / Math.sin(degreesToRadians(leftSideAngle));
+		if(isSinZero(leftSideAngle)) { //account for divide by 0 error
+			leftSideDistance = covPartialHorizontalDistance;
+		} else {
+			leftSideDistance = objVerticalDistance / Math.sin(degreesToRadians(leftSideAngle));
+		}
 
 		//important triangle
 		var covVerticalAngleDiff; // y
@@ -145,44 +128,23 @@ class ViewPort {
 		}
 
 		var ZPOS = leftSideDistance * Math.sin(degreesToRadians(covVerticalAngleDiff));
-		//account for rounding errors
-		if(covVerticalAngleDiff % 180 == 0) {
-			ZPOS = 0;
-		}
+		if(isSinZero(covVerticalAngleDiff)) { ZPOS = 0; } //account for rounding errors
 		var XPOS = leftSideDistance * Math.cos(degreesToRadians(covVerticalAngleDiff));
+		if(isCosZero(covVerticalAngleDiff)) { XPOS = 0; } //account for rounding errors
 
-		//determine the sign of these values
-		if(object.name == "h90v45") {
+		
+		if(object.name == "Neptune") {
 			console.log();
 		}
-		// console.log(object.name);
-		// console.log("H: " + angleDiffs.hDiffFromCenter);
-		// console.log("V: " + angleDiffs.vDiffFromCenter);
-		// console.log("XPOS: " + XPOS);
-		// console.log("YPOS: " + YPOS);
-		// console.log("ZPOS: " + ZPOS);
-		// console.log("--------");
+
+		//determine the sign of the positions
 		if(oppositeHemispheres) {
 			if(XPOS > 0) {XPOS *= -1;}
 		}
-		if(Math.abs(centerOfView.vAngle) == 90 && ZPOS == 0) {
+		if(Math.abs(centerOfView.vAngle) >= 90 && (angleDiffs.hDiffFromCenter % 270 == 0 && angleDiffs.hDiffFromCenter != 0 || Math.abs(angleDiffs.hDiffFromCenter) == 90)) {
 			YPOS *= -1;
 		}
-		// if(Math.abs(centerOfView.vAngle) >= 90 && Math.abs(centerOfView.hAngle) % 90 == 0) {
-		// 	YPOS *= -1;
-		// }
-		// if((Math.abs(centerOfView.vAngle) == 90 && centerOfView.hAngle == 0 || (Math.abs(getEquivalentAngle(centerOfView.vAngle)) == 90) && Math.abs(centerOfView.hAngle) % 90 == 0 && centerOfView.hAngle != 0)) {
-		// 	YPOS *= -1;
-		// }
-		// if(Math.abs(centerOfView.vAngle) > 90) {
-		// 	YPOS *= -1;
-		// }
 		
-		// if(object.name == "right") {
-		// 	console.log("XPOS: " + XPOS);
-		// 	console.log("YPOS: " + YPOS);
-		// 	console.log("ZPOS: " + ZPOS);
-		// }
 		var relativePosition = new Position(XPOS, YPOS, ZPOS);
 		return relativePosition;
 	}
@@ -198,13 +160,18 @@ class ViewPort {
 		let hDistance = this.getDiagonalDistance(position.y, position.x);
 
 		let sinHAngle = position.y / hDistance; //opposite / hypotenuse
-		let hRadians = Math.asin(sinHAngle);
-		let hAngle = radiansToDegrees(hRadians);
-		if(isNaN(hAngle)) {hAngle = 0;}
+		if(hDistance == 0) { sinHAngle = 0; }
+		let hAngle = radiansToDegrees(Math.asin(sinHAngle));
+		if(Math.abs(parseFloat(hAngle.toFixed()) - hAngle) < 0.00000000000001) {
+			hAngle = parseFloat(hAngle.toFixed());
+		}
 
 		let sinVAngle = position.z / distance; //opposite / hypotenuse
-		let vRadians = Math.asin(sinVAngle);
-		let vAngle = radiansToDegrees(vRadians);
+		if(distance == 0) { sinVAngle = 0; }
+		let vAngle = radiansToDegrees(Math.asin(sinVAngle));
+		if(Math.abs(parseFloat(vAngle.toFixed()) - vAngle) < 0.00000000000001) {
+			vAngle = parseFloat(vAngle.toFixed());
+		}
 
 		//displays things with a negative x value correctly (goes halfway around)
 		if(position.x < origin.x) {
@@ -226,13 +193,18 @@ class ViewPort {
 		let hDistance = this.getDiagonalDistance(relativePosition.y, relativePosition.x);
 
 		let sinHAngle = relativePosition.y / hDistance; //opposite / hypotenuse
-		let hRadians = Math.asin(sinHAngle);
-		let hAngle = radiansToDegrees(hRadians);
-		if(isNaN(hAngle)) {hAngle = 0;}
+		if(hDistance == 0) { sinHAngle = 0; }
+		let hAngle = radiansToDegrees(Math.asin(sinHAngle));
+		if(Math.abs(parseFloat(hAngle.toFixed()) - hAngle) < 0.00000000000001) {
+			hAngle = parseFloat(hAngle.toFixed());
+		}
 
 		let sinVAngle = relativePosition.z / distance; //opposite / hypotenuse
-		let vRadians = Math.asin(sinVAngle);
-		let vAngle = radiansToDegrees(vRadians);
+		if(distance == 0) { sinVAngle = 0; }
+		let vAngle = radiansToDegrees(Math.asin(sinVAngle));
+		if(Math.abs(parseFloat(vAngle.toFixed()) - vAngle) < 0.00000000000001) {
+			vAngle = parseFloat(vAngle.toFixed());
+		}
 
 		//displays things with a negative x value correctly (goes halfway around)
 		if(relativePosition.x < origin.x) {
@@ -241,12 +213,6 @@ class ViewPort {
 			} else {
 				hAngle = -90 + (-90 - hAngle);
 			}
-			// only have to do one or the other
-		// 	if(vAngle > 0) {
-		// 		vAngle = 90 + (90 - vAngle);
-		// 	} else {
-		// 		vAngle = -90 + (-90 - vAngle);
-		// 	}
 		}
 
 		return new SphericalCoordinate(new Position(0,0,0), distance, hAngle, vAngle);

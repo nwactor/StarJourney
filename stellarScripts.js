@@ -30,6 +30,16 @@ function getEquivalentAngle(angle) {
 	}
 }
 
+//Needed to account for slight rounding errors in the conversion between radians and degrees
+function isSinZero(angle) {
+	return angle % 180 == 0;
+}
+
+//Needed to account for slight rounding errors in the conversion between radians and degrees
+function isCosZero(angle) {
+	return (angle % 270 == 0 && angle != 0) || (angle % 90 == 0 && angle % 180 != 0);
+}
+
 //basically spherical coord to 3d coord
 //WHEN RUNNING BACK THRU VIEWPORT FUNCTIONS IT'S OFF BY A FACTOR OF AROUND 10%,
 //PROBABLY DUE TO ROUNDING ERRORS, WHICH SUCKS. SO I SHOULD ADD A SPHERICAL COORD
@@ -37,10 +47,16 @@ function getEquivalentAngle(angle) {
 //THAT IN VIEWPORT.get2DPositionCoordinates AND DOESN'T HAVE TO GO THRU MULTIPLE CONVERSIONS
 function getOrbitalPoint(origin, distance, hAngle, vAngle) {
 	let zPos = origin.z + Math.sin(degreesToRadians(vAngle)) * distance;
-	
+	if(isSinZero(vAngle)) { zPos = origin.z; }
+
 	let hDistance = Math.cos(degreesToRadians(vAngle)) * distance;
+	if(isCosZero(vAngle)) { hDistance = 0; } //account for rounding error
+	
 	let xPos = origin.x + Math.cos(degreesToRadians(hAngle)) * hDistance;
+	if(isCosZero(hAngle)) { xPos = origin.x; }
+	
 	let yPos = origin.y + Math.sin(degreesToRadians(hAngle)) * hDistance;	
+	if(isSinZero(hAngle)) { yPos = origin.y; }
 
 	return new Position(xPos, yPos, zPos);
 }

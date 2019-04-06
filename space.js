@@ -12,7 +12,7 @@ celestialObjects = [];
 
 function createSolarSystem(viewPort) {
 	// viewPort.position.x = -92960000;
-	// viewPort.position = getOrbitalPoint(new Position(0,0,0), 92960000, 180, 0);
+	viewPort.position = getOrbitalPoint(new Position(0,0,0), 92960000, 180, 0);
 	viewPort.position.z = 900000000;
 	viewPort.rotation.z = -90;
 
