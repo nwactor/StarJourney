@@ -30,7 +30,7 @@ class ViewPort {
 
 		celestialObjects.forEach(function(object) {
 			let coordinates = this.get2DPositionCoordinates(object, centerOfView);
-			// let objectIsVisible = this.getDiagonalDistance(coordinates.x, coordinates.y) <= 100;
+			
 
 			if(coordinates.isVisible) {
 				//put it on the viewport in the place it would fall on the sphere
@@ -46,9 +46,6 @@ class ViewPort {
 		$('#view-pos-z').val(this.position.z);
 	}
 	get2DPositionCoordinates(object, centerOfView) {
-		// if(object.name == 'back') { 
-		// 	console.log("debugging");
-		// }
 		//get the object's spherical coordinates using the center of view as the axis
 		let obj3dCoord = this.getPositionRelativeToCOV(object, centerOfView);
 		let objSphericalCoord = this.getSphericalCoordinateFromRelativePosition(obj3dCoord);
@@ -59,10 +56,11 @@ class ViewPort {
 		let hDiffFromCenter = angleDiffs.hDiffFromCenter;
 		let vDiffFromCenter = angleDiffs.vDiffFromCenter;
 
-		let objectIsVisible = true;
+		let isObjectVisible;
 		if(!(Math.abs(hDiffFromCenter) <= this.fieldOfView / 2 && Math.abs(vDiffFromCenter) <= this.fieldOfView / 2)) {
-			// return {isVisible: false};
-			objectIsVisible = false;
+			return {isVisible: false};
+		} else {
+			isObjectVisible = true;
 		}
 
 		let horizontalDist = Math.cos(degreesToRadians(vDiffFromCenter)) * Math.sin(degreesToRadians(hDiffFromCenter));
@@ -82,7 +80,7 @@ class ViewPort {
 		let rotatedU = (u * transform[0][0]) + (v * transform[1][0]);
 		let rotatedV = (u * transform[0][1]) + (v * transform[1][1]);
 
-		return {x: rotatedU, y: rotatedV, isVisible: objectIsVisible};
+		return {x: rotatedU, y: rotatedV, isVisible: isObjectVisible};
 	}
 	getPositionRelativeToCOV(object, centerOfView) {
 		if(object.name == "Neptune") {
@@ -126,7 +124,6 @@ class ViewPort {
 		} else {
 			covVerticalAngleDiff = leftSideAngle - centerOfView.vAngle;
 		}
-
 		var ZPOS = leftSideDistance * Math.sin(degreesToRadians(covVerticalAngleDiff));
 		if(isSinZero(covVerticalAngleDiff)) { ZPOS = 0; } //account for rounding errors
 		var XPOS = leftSideDistance * Math.cos(degreesToRadians(covVerticalAngleDiff));
@@ -373,26 +370,6 @@ class ViewPort {
 			relativePosition.y / distance,
 			relativePosition.z / distance
 		);
-	}
-	getDistanceToNearestPole(vAngle) {
-		if(vAngle == 90 || vAngle == -90 || vAngle == 270 || vAngle == -270) { //covered here because 90 % 90 = 0
-			return 0;
-		}
-		if((vAngle > 0 && vAngle < 180) || (vAngle < -180 && vAngle > -360)) { //northern hemisphere
-			if(vAngle < 0) {
-				return 90 - (vAngle % 90);
-			} else {
-				return Math.abs(-90 - (vAngle % 90));
-			}
-		} else if((vAngle < 0 && vAngle > -180) || (vAngle > 180 && vAngle < 360)) { //southern hemisphere
-			if(vAngle > 0) {
-				return 90 - (vAngle % 90);
-			} else {
-				return Math.abs(-90 - (vAngle % 90));
-			}
-		} else { //equator
-			return 90;
-		}
 	}
 }
 

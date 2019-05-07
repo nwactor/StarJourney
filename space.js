@@ -6,15 +6,16 @@
 
 const sunRadius = 432288; //miles
 
-viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 135);
+viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 180);
 // viewPort = new ViewPort(new Position(0, 0, 500000000), new Rotation(0, 0, -90), 135);
 celestialObjects = [];
 
 function createSolarSystem(viewPort) {
 	// viewPort.position.x = -92960000;
 	viewPort.position = getOrbitalPoint(new Position(0,0,0), 92960000, 180, 0);
-	viewPort.position.z = 900000000;
-	viewPort.rotation.z = -90;
+	// viewPort.position.z = 900000000;
+	// viewPort.rotation.z = -90;
+	viewPort.rotation.z = 10;
 
 	var sun = new CelestialObject('Sun', 'yellow', sunRadius, {x: 0, y: 0, z: 0});
 	var mercury = new CelestialObject('Mercury', 'gray', 3032, getOrbitalPoint(sun.position, million(35.98), 90, 0));
