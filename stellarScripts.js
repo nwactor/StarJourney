@@ -137,8 +137,6 @@ function rotateViewPortDown(angle) {
 }
 
 function rotateViewPortRight(angle) {
-	viewPort.rotation.y = (viewPort.rotation.y + angle) % 360;
-	viewPort.render(celestialObjects);
 	// var rotationLineLength = Math.sqrt(Math.pow(90, 2) + Math.pow(viewPort.rotation.z, 2));
 	// var rotationLength = rotationLineLength / (90 / angle);
 	// var angleOne = Math.asin(degreesToRadians(90 / rotationLength));
@@ -147,8 +145,8 @@ function rotateViewPortRight(angle) {
 	// viewPort.rotation.y = (rotationLength * angleOne) % 360;
 	// viewPort.rotation.z = (rotationLength * angleTwo) % 360;
 	// // viewPort.rotation.z = 
-
-	// viewPort.render(celestialObjects);
+	viewPort.rotation.y = (viewPort.rotation.y + angle) % 360;
+	viewPort.render(celestialObjects);
 }
 
 function rotateViewPortLeft(angle) {
