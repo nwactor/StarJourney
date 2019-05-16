@@ -72,6 +72,11 @@ class CelestialObject {
 			appearance.width(appearance.width() - 2);
 		});
 
+		//add a click handler to make the viewport look at the object
+		appearance.on('click', e => {
+			viewport.lookAt(this);
+		});
+
 		$('#viewport').append(appearance);
 	}
 	//1 degree = 60 arc minutes

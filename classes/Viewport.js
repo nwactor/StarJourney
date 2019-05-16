@@ -1,14 +1,26 @@
 class ViewPort {
 	//a circular viewport
-	constructor(position, rotation, fieldOfView) {
+	constructor(position, rotation, fieldOfView, celestialObjects) {
 		this.position = position;
 		this.rotation = rotation; //has x, y, z properties, in degrees
 		this.fieldOfView = fieldOfView;
+		this.celestialObjects = celestialObjects;
 		this.artMode = false;
 	}
+	lookAt(object) {
+		var objSphericalCoord = this.getSphericalCoordinateFromPosition(object.position);
+		this.rotation.y = objSphericalCoord.hAngle;
+		this.rotation.z = objSphericalCoord.vAngle;
+
+		this.render();
+	}
 	render(celestialObjects) {
+		if(celestialObjects != null) {
+			this.celestialObjects = celestialObjects;
+		}
+
 		//sort the objects by distance so that closer ones will render on top
-		celestialObjects.sort((a, b) => {
+		this.celestialObjects.sort((a, b) => {
 			return this.position.getDistance(b.position) - this.position.getDistance(a.position);
 		});
 
@@ -25,7 +37,7 @@ class ViewPort {
 		}
 
 		//display visible objects in the viewport
-		celestialObjects.forEach(function(object) {
+		this.celestialObjects.forEach(function(object) {
 			let coordinates = this.get2DPositionCoordinates(object, centerOfView);
 
 			if(coordinates.isVisible) {
@@ -91,7 +103,7 @@ class ViewPort {
 
 		/* variable names don't do justice to the following... it needs a diagram to make sense.
 		The following is a lot of trigonometry. */
-		
+
 		//Right side Triangle
 		var objHorizontalDistance = Math.cos(degreesToRadians(objSphericalCoord.vAngle)) / 1; // A
 		var objVerticalDistance = Math.sin(degreesToRadians(objSphericalCoord.vAngle)) / 1; // C

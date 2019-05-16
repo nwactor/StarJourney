@@ -50,6 +50,14 @@ body {
 	justify-content: center;
 }
 
+.ui-spacer {
+	margin-top: 5px;
+}
+
+.input-label-inline {
+	margin-right: 5px;
+}
+
 .button-container {
 	
 }
