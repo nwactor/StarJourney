@@ -65,6 +65,10 @@ $('#art-button').on('click', () => {
 	viewPort.artMode = !viewPort.artMode;
 });
 
+$('input').on('keydown', e => {
+	e.stopPropagation();
+});
+
 var rotationKeySpeed = 5;
 
 $(document).on('keydown', e => {
