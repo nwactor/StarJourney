@@ -65,30 +65,52 @@ $('#art-button').on('click', () => {
 	viewPort.artMode = !viewPort.artMode;
 });
 
-// viewPort.fieldOfView / 27
+var rotationKeySpeed = 5;
+
+$(document).on('keydown', e => {
+	switch(e.which) {
+		case 38: //up
+			rotateViewPortUp(rotationKeySpeed);
+			break;
+		case 40: //down
+			rotateViewPortDown(rotationKeySpeed);
+			break;
+		case 37: //left
+			rotateViewPortLeft(rotationKeySpeed);
+			break;
+		case 39: //right
+			rotateViewPortRight(rotationKeySpeed);
+			break;
+		case 32: //space
+			jump($('#jump-distance').val());
+			break;
+	}
+});
+
+var rotationClickSpeed = 15;
 
 $('#up-button').on('click', () => {
-	rotateViewPortUp(5);
+	rotateViewPortUp(rotationClickSpeed);
 });
 
 $('#down-button').on('click', () => {
-	rotateViewPortDown(5);
+	rotateViewPortDown(rotationClickSpeed);
 });
 
 $('#left-button').on('click', () => {
-	rotateViewPortLeft(5);
+	rotateViewPortLeft(rotationClickSpeed);
 });
 
 $('#right-button').on('click', () => {
-	rotateViewPortRight(5);
+	rotateViewPortRight(rotationClickSpeed);
 });
 
 $('#spinR-button').on('click', () => {
-	spinViewPortRight(5);
+	spinViewPortRight(rotationClickSpeed);
 });
 
 $('#spinL-button').on('click', () => {
-	spinViewPortLeft(5);
+	spinViewPortLeft(rotationClickSpeed);
 });
 
 $('#jump-button').on('click', () => {
