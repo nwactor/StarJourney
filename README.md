@@ -43,6 +43,6 @@ Astronomers have compiled many star catalogs, but believe it or not, as far as I
 
 The planets of our own Solar System are loaded with a simpler approach. Because there are less than 10 of them, those objects are manually created in the space.js file in the root directory of the repository.
 
-### Displaying it All (The Math):
+#### Displaying it All (The Math)
 
 Simply put, the viewport finds the relative position of every celestial body to itself, converts that to a spherical coordinate, and then checks whether that spherical coordinate is visible or not given which way the viewport is looking. An in-depth explanation with diagrams is coming up next...
