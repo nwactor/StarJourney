@@ -54,6 +54,26 @@ body {
 	margin-top: 5px;
 }
 
+#detail-panel {
+	background-color: #e0dc91;
+	width: 70%;
+
+	padding: 10px;
+	border: 2px solid black;
+	
+	margin: auto;
+}
+
+.info-header {
+	font-weight: bold;
+}
+
+#selected-name {
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+}
+
 .input-label-inline {
 	margin-right: 5px;
 }

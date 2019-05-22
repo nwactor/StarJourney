@@ -3,18 +3,36 @@
 <head>
 	<title>Star Journey</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="./lib/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="./stellarScripts.js"></script>
 	<script type="text/javascript" src="./data/StarData.js"></script>
 	<script type="text/javascript" src="./classes/Position.js"></script>
 	<script type="text/javascript" src="./classes/SphericalCoordinate.js"></script>
 	<script type="text/javascript" src="./classes/Rotation.js"></script>
 	<script type="text/javascript" src="./classes/CelestialObject.js"></script>
-	<script src="./lib/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="./classes/Star.js"></script>
+	<script type="text/javascript" src="./classes/Planet.js"></script>
 	<script type="text/javascript" src="./classes/Viewport.js"></script>
 </head>
 <body>
 	<div id="container">
-		<div id="left-options">
+		<div id="right-options">
 			<button id="art-button">Art Mode</button>
+			<div class="ui-spacer"></div>
+			<div class="v-container">
+				<div id="detail-panel">
+					<div id="selected-name">No Selection</div>
+					<span class="info-header">Distance (Miles): </span> <div id="selected-distance-miles" class="info-field"></div>
+					<span class="info-header">Distance (AU): </span> <div id="selected-distance-au" class="info-field"></div>
+					<span class="info-header">Distance (LY): </span> <div id="selected-distance-ly" class="info-field"></div>
+					<span class="info-header">Distance (Parsecs): </span> <div id="selected-distance-parsecs" class="info-field"></div>
+					<div id="star-info">
+						<span class="info-header">Spectral Type: </span> <div id="selected-spectral-type" class="info-field"></div>
+						<span class="info-header">Constellation: </span> <div id="selected-constellation" class="info-field"></div>
+					</div>
+					<span class="info-header">Notes: </span> <div id="selected-notes" class="info-field"></div>
+				</div>
+			</div>
 		</div>
 		<div id="viewport"></div>
 		<div id="right-options" class="v-container">
@@ -68,7 +86,7 @@
 		$('#viewport').height(window.innerHeight * .95);
 		$('#viewport').width(window.innerHeight * .95);
 	</script>
-	<script type="text/javascript" src="./stellarScripts.js"></script>
+	<script type="text/javascript" src="./controls.js"></script>
 	<script type="text/javascript" src="./space.js"></script>
 	<!-- <script type="text/javascript" src="./tests/tests.js"></script> -->
 </body>

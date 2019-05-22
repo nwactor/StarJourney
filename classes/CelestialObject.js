@@ -1,9 +1,10 @@
 class CelestialObject {
-	constructor(name, color, radius, position) {
+	constructor(name, color, radius, position, altNames) {
 		this.name = name;
 		this.color = color;
 		this.radius = radius;
 		this.position = position;
+		this.altNames = altNames;
 	}
 	displayOnViewport(viewport, coordinates) {
 		var appearance = $('<div>');
@@ -18,7 +19,7 @@ class CelestialObject {
 		//show a circle with diameter = (apparentAngle / viewport.FoV) * height 
 		appearance.css("background-color", this.color);
 
-		var diameter = (this.getApparentSize(viewPort.position).degrees) / (viewPort.fieldOfView);
+		var diameter = (this.getApparentSize(viewport.position).degrees) / (viewport.fieldOfView);
 		diameter *= (window.innerHeight * .95);
 
 		//visibility protection for when the object is smaller than one pixel
@@ -75,6 +76,7 @@ class CelestialObject {
 		//add a click handler to make the viewport look at the object
 		appearance.on('click', e => {
 			viewport.lookAt(this);
+			this.showInfo(viewport);
 		});
 
 		$('#viewport').append(appearance);
@@ -118,6 +120,15 @@ class CelestialObject {
 		}
 
 		return apparentSize;
+	}
+	showInfo(viewport) {
+		$('#selected-name').text(this.name);
+		var distance = viewport.position.getDistance(this.position);
+		$('#selected-distance-miles').text(distance);
+		$('#selected-distance-au').text(auFromMiles(distance));
+		$('#selected-distance-ly').text(lyFromMiles(distance));
+		$('#selected-distance-parsecs').text(parsecsFromMiles(distance));
+		$('#selected-notes').text('');
 	}
 }
 
