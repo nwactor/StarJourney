@@ -35,14 +35,14 @@ Star Journey currently does not rely on any external libraries or servers and so
 1. Download this repository.
 2. Navigate to root of the directory and open index.html with your browser.
 
-### But How does it Work?
+## But How does it Work?
 
-#### The Data
+### The Data
 
 Astronomers have compiled many star catalogs, but believe it or not, as far as I'm aware there isn't a famous one out there that orders the stars by their distance to the Earth. So, I decided to make my own catalog, which you can find in the StarDatabaseOngoing.xlsx file in the data directory of the project. To create it, I took the HYG database (you can find file containing that in the same folder) filtered it to get the stars I was interested in using a script I named hygFilter.py, and then using the output (filtered_stars) as a base I manually compiled my list. Finally, in order to convert StarDatabaseOngoing into a format that is useable by Star Journey, I exported the data into a .csv (comma separated value) file and parsed that data into json with the calcXYZ.py script, the output of that being StarJson.json and StarData.js.
 
 The planets of our own Solar System are loaded with a simpler approach. Because there are less than 10 of them, those objects are manually created in the space.js file in the root directory of the repository.
 
-#### Displaying it All (The Math)
+### Displaying it All (The Math)
 
 Simply put, the viewport finds the relative position of every celestial body to itself, converts that to a spherical coordinate, and then checks whether that spherical coordinate is visible or not given which way the viewport is looking. An in-depth explanation with diagrams is coming up next...
