@@ -35,7 +35,7 @@ Star Journey currently does not rely on any external libraries or servers and so
 1. Download this repository.
 2. Navigate to root of the directory and open index.html with your browser.
 
-## But How does it Work?
+## But How Does it Work?
 
 ### The Data
 
