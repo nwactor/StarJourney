@@ -8,6 +8,7 @@ class ViewPort {
 		this.artMode = false;
 	}
 	lookAt(object) {
+		selectedObject = object;
 		var objSphericalCoord = this.getSphericalCoordinateFromPosition(object.position);
 		this.rotation.y = objSphericalCoord.hAngle;
 		this.rotation.z = objSphericalCoord.vAngle;
@@ -53,6 +54,7 @@ class ViewPort {
 		$('#view-pos-y').val(this.position.y);
 		$('#view-pos-z').val(this.position.z);
 		$('#fov-input').val(this.fieldOfView);
+		selectedObject.showInfo(this);
 	}
 	get2DPositionCoordinates(object, centerOfView) {
 		//get the object's spherical coordinates using the center of view as the reference frame for the x-axis

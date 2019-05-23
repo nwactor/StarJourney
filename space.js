@@ -6,10 +6,10 @@
 
 const sunRadius = 432288; //miles
 
-viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 90);
+var viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 90);
 // viewPort.fieldOfView = 70;
 // viewPort = new ViewPort(new Position(0, 0, 500000000), new Rotation(0, 0, -90), 135);
-celestialObjects = [];
+var celestialObjects = [];
 
 function createSolarSystem(viewPort) {
 	// viewPort.position.x = -92960000;
@@ -41,8 +41,6 @@ function createSolarSystem(viewPort) {
 	celestialObjects.push(uranus);
 	celestialObjects.push(neptune);
 	celestialObjects.push(pluto);
-
-	sun.showInfo(viewPort);
 }
 
 function loadStars() {
@@ -70,5 +68,6 @@ function loadStars() {
 
 createSolarSystem(viewPort);
 loadStars();
+var selectedObject = celestialObjects[0];
 
 viewPort.render(celestialObjects);
