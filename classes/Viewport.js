@@ -52,6 +52,7 @@ class ViewPort {
 		$('#view-pos-x').val(this.position.x);
 		$('#view-pos-y').val(this.position.y);
 		$('#view-pos-z').val(this.position.z);
+		$('#fov-input').val(this.fieldOfView);
 	}
 	get2DPositionCoordinates(object, centerOfView) {
 		//get the object's spherical coordinates using the center of view as the reference frame for the x-axis

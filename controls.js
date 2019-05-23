@@ -6,6 +6,17 @@ $('input').on('keydown', e => {
 	e.stopPropagation();
 });
 
+$('#fov-input').on('input', e => {
+	newFOV = parseInt($('#fov-input').val());
+	if(!isNaN(newFOV)) {
+		if(newFOV > 180) {
+			newFOV = 180;
+		}
+		viewPort.fieldOfView = newFOV;
+		viewPort.render();
+	}
+});
+
 var rotationKeySpeed = 5;
 
 $(document).on('keydown', e => {

@@ -6,7 +6,7 @@
 
 const sunRadius = 432288; //miles
 
-viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 180);
+viewPort = new ViewPort(new Position(0, 0, 0), new Rotation(0, 0, 0), 90);
 // viewPort.fieldOfView = 70;
 // viewPort = new ViewPort(new Position(0, 0, 500000000), new Rotation(0, 0, -90), 135);
 celestialObjects = [];
