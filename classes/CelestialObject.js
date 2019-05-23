@@ -11,8 +11,8 @@ class CelestialObject {
 		appearance.attr("id", this.name);
 		appearance.addClass("celestialObject");
 
-		var top = 50 - ((coordinates.y / 100) * 50);
-		var left = 50 + ((coordinates.x / 100) * 50);
+		var top = 50 - (coordinates.y * 50);
+		var left = 50 + (coordinates.x * 50);
 		appearance[0].style.top = top + "%";
 		appearance[0].style.left = left + "%";
 

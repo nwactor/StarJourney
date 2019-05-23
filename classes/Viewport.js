@@ -80,8 +80,9 @@ class ViewPort {
 		let horizontalDist = Math.cos(degreesToRadians(vDiffFromCenter)) * Math.sin(degreesToRadians(hDiffFromCenter));
 		let verticalDist = Math.sin(degreesToRadians(vDiffFromCenter));
 
-		let u = (horizontalDist /*/ (this.fieldOfView / 2)*/) * 100;
-		let v = (verticalDist /*/ (this.fieldOfView / 2)*/) * 100;
+		//the percentage of the way from the center of the viewport, 0.0 = at the center, 1.0 = at the edge
+		let u = horizontalDist * (180 / this.fieldOfView);
+		let v = verticalDist * (180 / this.fieldOfView);
 
 		//do a linear transfrom to determine the object's viewport coords after x rotation is taken into account
 		//the transform matrix:
