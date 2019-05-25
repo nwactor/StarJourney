@@ -18,7 +18,7 @@ function createSolarSystem(viewPort) {
 	// viewPort.rotation.z = -90;
 	// viewPort.rotation.z = 10;
 
-	var sun = new Star('Sun', 'yellow', sunRadius, {x: 0, y: 0, z: 0});
+	var sun = new Star('Sun', '#fff4b7', sunRadius, {x: 0, y: 0, z: 0});
 	var mercury = new Planet('Mercury', 'gray', 3032, getOrbitalPoint(sun.position, million(35.98), 90, 0), [], 'url(./images/mercury.jpg');
 	var venus = new Planet('Venus', '#f6d8a5', 6052, getOrbitalPoint(sun.position, 67237910, 140, 0), [], 'url(./images/venus.jpg');
 	var earth = new Planet('Earth', '#89a1e9', 7917.5, getOrbitalPoint(sun.position, 92960000, 179.9, 0), [], 'url(./images/earth.jpg');
