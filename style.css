@@ -20,6 +20,10 @@ body {
 
 .celestialObject {
 	position: absolute;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+
 	border-radius: 50%; /*circular*/
 	/*Center frame around it*/
 	display: flex;

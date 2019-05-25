@@ -27,6 +27,11 @@ class CelestialObject {
 			diameter = 2;
 		}
 
+		//add a background image if one is available and the object is big enough for detail
+		if(this.image && diameter >= 2) {
+			appearance.css('background-image', this.image);
+		}
+
 		appearance.height(diameter);
 		appearance.width(diameter);
 
