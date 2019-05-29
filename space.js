@@ -18,6 +18,7 @@ function createSolarSystem(viewPort) {
 	// viewPort.rotation.z = -90;
 	// viewPort.rotation.z = 10;
 
+	// spiraled planets
 	var sun = new Star('Sun', '#fff4b7', sunRadius, {x: 0, y: 0, z: 0});
 	var mercury = new Planet('Mercury', 'gray', 3032, getOrbitalPoint(sun.position, million(35.98), 90, 0), [], 'url(./images/mercury.jpg');
 	var venus = new Planet('Venus', '#f6d8a5', 6052, getOrbitalPoint(sun.position, 67237910, 140, 0), [], 'url(./images/venus.jpg');
@@ -29,6 +30,20 @@ function createSolarSystem(viewPort) {
 	var uranus = new Planet('Uranus', '#99fff1', 31518, getOrbitalPoint(sun.position, billion(1.784), -20, 0), [], 'url(./images/uranus.jpg');
 	var neptune = new Planet('Neptune', 'blue', 30559, getOrbitalPoint(sun.position, billion(2.793), 20, 0), [], 'url(./images/neptune.jpg');
 	var pluto = new Planet('Pluto', '#d5b497', 1477, getOrbitalPoint(sun.position, billion(3.67), 60, 0), [], 'url(./images/pluto.jpg');
+
+	// aligned planets
+	// var sun = new Star('Sun', '#fff4b7', sunRadius, {x: 0, y: 0, z: 0});
+	// var mercury = new Planet('Mercury', 'gray', 3032, getOrbitalPoint(sun.position, million(35.98), 90, 0), [], 'url(./images/mercury.jpg');
+	// var venus = new Planet('Venus', '#f6d8a5', 6052, getOrbitalPoint(sun.position, 67237910, 90, 0), [], 'url(./images/venus.jpg');
+	// var earth = new Planet('Earth', '#89a1e9', 7917.5, getOrbitalPoint(sun.position, 92960000, 90, 0), [], 'url(./images/earth.jpg');
+	// var moon = new Planet('Moon', '#F5F3CE', 1079, getOrbitalPoint(earth.position, 238900, 270, 0), [], 'url(./images/moon.jpg');
+	// var mars = new Planet('Mars', '#fb825c', 4212, getOrbitalPoint(sun.position, million(141.6), 90, 0), [], 'url(./images/mars.jpg');
+	// var jupiter = new Planet('Jupiter', '#c78b51', 43411, getOrbitalPoint(sun.position, million(483.8), 90, 0), [], 'url(./images/jupiter.jpg');
+	// var saturn = new Planet('Saturn', '#aa9f34', 72367.4, getOrbitalPoint(sun.position, million(890.7), 90, 0), [], 'url(./images/saturn.jpg');
+	// var uranus = new Planet('Uranus', '#99fff1', 31518, getOrbitalPoint(sun.position, billion(1.784), 90, 0), [], 'url(./images/uranus.jpg');
+	// var neptune = new Planet('Neptune', 'blue', 30559, getOrbitalPoint(sun.position, billion(2.793), 90, 0), [], 'url(./images/neptune.jpg');
+	// var pluto = new Planet('Pluto', '#d5b497', 1477, getOrbitalPoint(sun.position, billion(3.67), 90, 0), [], 'url(./images/pluto.jpg');
+	
 
 	celestialObjects.push(sun);
 	celestialObjects.push(mercury);

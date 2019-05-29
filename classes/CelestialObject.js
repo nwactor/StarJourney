@@ -65,17 +65,20 @@ class CelestialObject {
 
 		//make object show its name when hovered over
 		appearance.on('mouseover', () => {
-			appearance.height(appearance.height() + 2);
-			appearance.width(appearance.width() + 2);
-
+			if(appearance.height() <= 2) {
+				appearance.height(appearance.height() + 2);
+				appearance.width(appearance.width() + 2);
+			}
 			frame.css('display', 'inline');			
 		});
 
 		//remove name when no longer hovered over
 		appearance.on('mouseout', e => {
 			frame.css('display', 'none');	
-			appearance.height(appearance.height() - 2);
-			appearance.width(appearance.width() - 2);
+			if(appearance.height() <= 4) {
+				appearance.height(appearance.height() - 2);
+				appearance.width(appearance.width() - 2);
+			}
 		});
 
 		//add a click handler to make the viewport look at the object
