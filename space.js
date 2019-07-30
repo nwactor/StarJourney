@@ -85,4 +85,6 @@ createSolarSystem(viewPort);
 loadStars();
 var selectedObject = celestialObjects[0];
 
-viewPort.render(celestialObjects);
+startTime(60);
+
+// viewPort.render(celestialObjects);

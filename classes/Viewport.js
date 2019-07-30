@@ -6,6 +6,8 @@ class ViewPort {
 		this.fieldOfView = fieldOfView;
 		this.celestialObjects = celestialObjects;
 		this.artMode = false;
+		this.velocity = new Velocity(0,0,0);
+		this.acceleration = new Acceleration(0,0,0);
 	}
 	lookAt(object) {
 		selectedObject = object;
@@ -26,7 +28,7 @@ class ViewPort {
 		});
 
 		//clear the viewewport from the last render unless artMode is on
-		if(!this.artMode) {$('#viewport').empty();}
+		// if(!this.artMode) {$('#viewport').empty();}
 
 		//get the viewport's center of view and adjust it if too close to 360 or -360
 		var centerOfView = this.getViewCenter();
@@ -43,6 +45,8 @@ class ViewPort {
 
 			if(coordinates.isVisible) {
 				object.displayOnViewport(this, coordinates);
+			} else {
+				object.hide();
 			}
 		}.bind(this));
 
